@@ -9,7 +9,7 @@ import (
 
 type Clerk struct {
 	server *labrpc.ClientEnd
-	// You will have to modify this struct.
+	Id     int64
 }
 
 func nrand() int64 {
@@ -22,7 +22,8 @@ func nrand() int64 {
 func MakeClerk(server *labrpc.ClientEnd) *Clerk {
 	ck := new(Clerk)
 	ck.server = server
-	// You'll have to add code here.
+	ck.Id = nrand()
+
 	return ck
 }
 
@@ -38,7 +39,7 @@ func (ck *Clerk) Get(key string) string {
 	args := GetArgs{key}
 	reply := GetReply{}
 
-	// Keep trying forever, until Call is OK
+	// Keep trying until server sends back success
 	for {
 		ok := ck.server.Call("KVServer.Get", &args, &reply)
 		if ok {
@@ -56,7 +57,7 @@ func (ck *Clerk) Get(key string) string {
 // arguments. and reply must be passed as a pointer.
 func (ck *Clerk) PutAppend(key string, value string, op string) string {
 
-	args := PutAppendArgs{key, value}
+	args := PutAppendArgs{key, value, ck.Id, nrand()}
 	reply := PutAppendReply{}
 
 	// Keep trying forever, until Call is OK
